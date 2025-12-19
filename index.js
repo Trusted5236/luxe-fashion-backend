@@ -2,8 +2,10 @@ import express from 'express'
 import dotenv from 'dotenv'
 import mongoose from 'mongoose'
 import authRouter from './routes/user.js'
+import cors from 'cors'
 
 
+app.use(cors())
 dotenv.config()
 const app = express()
 app.use(express.json())
