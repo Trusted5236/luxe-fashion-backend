@@ -5,9 +5,9 @@ import authRouter from './routes/user.js'
 import cors from 'cors'
 
 
-app.use(cors())
-dotenv.config()
 const app = express()
+dotenv.config()
+app.use(cors())
 app.use(express.json())
 const PORT = process.env.PORT
 const dataBase = async ()=>{
