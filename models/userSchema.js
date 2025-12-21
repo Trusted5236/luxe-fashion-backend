@@ -4,7 +4,9 @@ const userSchema = new mongoose.Schema({
     name : {type: String, required: true, minlength: 3},
     email : {type: String, required: true, unique: true},
     password : {type: String, required: true, minlength: 6},
-    role: {type : String, enum: ["user", "seller", "admin"], default: "user"}
+    role: {type : String, enum: ["user", "seller", "admin"], default: "user"},
+    resetToken: {type: String},
+    resetTokenExpiry: {type: Date}
 })
 
 const User = mongoose.model("User", userSchema)
