@@ -76,7 +76,7 @@ router.post("/request-password-reset", async (req, res)=>{
     await user.save()
 
     const subject = "Password Reset Request"
-    const text = `Click the link to reset your password: ${process.env.Frontend_URL}/auth/reset-password?resetToken=${resetToken}`
+    const text = `Click the link to reset your password: ${process.env.Frontend_URL}/reset-password?resetToken=${resetToken}`
 
     await sendEmail(user.email, subject, text)
 
