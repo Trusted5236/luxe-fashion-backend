@@ -52,7 +52,7 @@ router.post("/login", async (req, res)=>{
         res.status(400).json({message : "Invalid credentials!"})
     }
 
-    const token = await getAccessToken({id: user._id, role: user.role, email : user.email, name: user.name})
+    const token = getAccessToken({id: user._id, role: user.role, email : user.email, name: user.name})
     res.status(201).json(token)
 })
 
@@ -76,7 +76,7 @@ router.post("/request-password-reset", async (req, res)=>{
     await user.save()
 
     const subject = "Password Reset Request"
-    const text = `Click the link to reset your password: ${process.env.Frontend_URL}/resetToken=${resetToken}`
+    const text = `Click the link to reset your password: ${process.env.Frontend_URL}/auth/reset-password?resetToken=${resetToken}`
 
     await sendEmail(user.email, subject, text)
 
