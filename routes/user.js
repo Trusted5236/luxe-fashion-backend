@@ -5,6 +5,7 @@ import Joi from 'joi'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import authMiddleWare from '../middleware/auth.js'
+import sendEmail from '../config/amazonses.js'
 
 const createJoiSchema = Joi.object({
     name: Joi.string().required().min(3),
@@ -71,8 +72,13 @@ router.post("/request-password-reset", async (req, res)=>{
 
     let resetToken = jwt.sign({id: user._id}, process.env.JWT_KEY, {expiresIn : '1h'})
     user.resetToken = resetToken
-    user.resetTokenExpiry = Date.now() + 3600000 // 1 hour from now
+    user.resetTokenExpiry = Date.now() + 3600000 
     await user.save()
+
+    const subject = "Password Reset Request"
+    const text = `Click the link to reset your password: ${process.env.Frontend_URL}/resetToken=${resetToken}`
+
+    await sendEmail(user.email, subject, text)
 
     res.status(200).json({message : "Reset token generated successfully!", resetToken})
 })
