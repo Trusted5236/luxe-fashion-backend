@@ -3,6 +3,7 @@ import dotenv from 'dotenv'
 import mongoose from 'mongoose'
 import authRouter from './routes/user.js'
 import cors from 'cors'
+import categoryRouter from './routes/category.js'
 
 
 
@@ -10,6 +11,7 @@ const app = express()
 dotenv.config()
 app.use(cors())
 app.use(express.json())
+app.use(express.urlencoded({ extended: true }));
 const PORT = process.env.PORT
 const dataBase = async ()=>{
     try {
@@ -22,6 +24,7 @@ const dataBase = async ()=>{
 
 dataBase()
 app.use("/api/auth", authRouter)
+app.use("/api/categories", categoryRouter)
 
 
 
