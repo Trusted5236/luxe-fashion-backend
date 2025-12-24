@@ -49,7 +49,7 @@ router.post("/", authMiddleWare, uploads.single("image"), async (req, res)=>{
 
     const newCategory = new Category({
         name: name,
-        image: image
+        image: `${process.env.Backend_URL}/${image.replace(/\\/g, "/")}`
     })
     await newCategory.save()
     res.status(201).json({message : "Category created successfully!", category : newCategory})
