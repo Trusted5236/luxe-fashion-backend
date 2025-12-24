@@ -3,7 +3,7 @@ const router = express.Router();
 import Category from "../models/categorySchema.js";
 import Joi from "joi";
 import authMiddleWare from "../middleware/auth.js";
-import checkRole from "../config/checkRole.js";
+import checkRole from "../middleware/checkRole.js";
 import multer from "multer";
 
 const storage = multer.diskStorage({
