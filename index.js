@@ -4,6 +4,7 @@ import mongoose from 'mongoose'
 import authRouter from './routes/user.js'
 import cors from 'cors'
 import categoryRouter from './routes/category.js'
+import path from 'path'
 
 
 
@@ -12,6 +13,7 @@ dotenv.config()
 app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
+app.use('/uploads', express.static(path.join(__dirname, './uploads')));
 const PORT = process.env.PORT
 const dataBase = async ()=>{
     try {
