@@ -4,7 +4,7 @@ import Category from "../models/categorySchema.js";
 import authMiddleWare from "../middleware/auth.js";
 import checkRole from "../middleware/checkRole.js";
 import multer from "multer";
-import { storage } from "../config/cloudinary.js";
+import { storage, cloudinary } from "../config/cloudinary.js";
 
 const fileFilter = (req, file, cb)=>{
     const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp", "image/avif"];
@@ -47,6 +47,22 @@ router.post("/", authMiddleWare, checkRole("admin"), uploads.single("image"), as
 router.get("/", async (req, res)=>{
     const categories =  await Category.find()
     res.status(200).json(categories)
+})
+
+router.delete("/:id", authMiddleWare, checkRole("admin"), async (req, res)=>{
+    const {id} = req.params
+    const category = await Category.findById(id)
+    if(!category){
+        return res.status(404).json({message : "Category not found!"})
+    }  
+
+    if(category.image){
+        const publicId = category.image.split("/").pop().split(".")[0]
+        await cloudinary.uploader.destroy(`categories/${publicId}`)
+    }
+    
+    await Category.findByIdAndDelete(id)
+    res.status(200).json({message : "Category deleted successfully!"})
 })
 
 export default router
