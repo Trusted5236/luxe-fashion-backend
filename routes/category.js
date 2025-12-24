@@ -55,4 +55,9 @@ router.post("/", authMiddleWare, uploads.single("image"), async (req, res)=>{
     res.status(201).json({message : "Category created successfully!", category : newCategory})
 })
 
+router.get("/", async (req, res)=>{
+    const categories =  await Category.find()
+    res.status(200).json(categories)
+})
+
 export default router
