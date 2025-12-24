@@ -1,21 +1,10 @@
 import express from "express";
 const router = express.Router();
 import Category from "../models/categorySchema.js";
-import Joi from "joi";
 import authMiddleWare from "../middleware/auth.js";
 import checkRole from "../middleware/checkRole.js";
 import multer from "multer";
-
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) { 
-        cb(null, 'uploads/categories/')
-    },
-    filename:(req, file, cb)=>{
-        const timestamp = Date.now();
-        const originalName = file.originalname.replace(/\s+/g, '-').replace(/[^a-zA-Z0-9.-]/g, '');
-        cb(null, `${timestamp}-${originalName}`);
-    }
-})
+import { storage } from "../config/cloudinary.js";
 
 const fileFilter = (req, file, cb)=>{
     const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp", "image/avif"];
@@ -33,7 +22,7 @@ const uploads = multer({
 })
 
 
-router.post("/", authMiddleWare, uploads.single("image"), async (req, res)=>{
+router.post("/", authMiddleWare, checkRole("admin"), uploads.single("image"), async (req, res)=>{
     const {name} = req.body
     const image = req.file ? req.file.path : null
 
@@ -49,7 +38,7 @@ router.post("/", authMiddleWare, uploads.single("image"), async (req, res)=>{
 
     const newCategory = new Category({
         name: name,
-        image: `${process.env.Backend_URL}/${image.replace(/\\/g, "/")}`
+        image: image
     })
     await newCategory.save()
     res.status(201).json({message : "Category created successfully!", category : newCategory})
