@@ -69,7 +69,7 @@ router.get('/', authMiddleWare, async (req, res)=>{
         query.title = { $regex: querySearch, $options: 'i' };
     }
 
-    const products = await Product.find(query).select("-description -seller -category -__v").skip((page - 1) * perPage).limit(perPage);
+    const products = await Product.find(query).select("-description -seller -category -__v").skip((page - 1) * perPage).limit(perPage).lean();
 
     const updatedProducts = products.map(product => {
         const numberOfReviews = product.reviews.length;
