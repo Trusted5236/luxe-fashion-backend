@@ -56,7 +56,7 @@ router.get('/', authMiddleWare, async (req, res)=>{
     let query = {};
 
     if(queryCategory){
-        const categories = await Category.find({name: queryCategory});
+        const categories = await Category.findOne({name: queryCategory});
 
         if(!categories){
             return res.status(400).json({message: "Category not found"});
@@ -77,7 +77,7 @@ router.get('/', authMiddleWare, async (req, res)=>{
         const averageRating = sumOfRatings / (numberOfReviews || 1);
 
         return {
-            ...products,
+            ...product,
             displayImage: product.images[0],
             reviews: {
                 numberOfReviews,
