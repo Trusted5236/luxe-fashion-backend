@@ -5,6 +5,7 @@ import authRouter from './routes/user.js'
 import cors from 'cors'
 import categoryRouter from './routes/category.js'
 import path from 'path'
+import productRouter from './routes/product.js'
 
 
 const app = express()
@@ -25,6 +26,7 @@ const dataBase = async ()=>{
 dataBase()
 app.use("/api/auth", authRouter)
 app.use("/api/categories", categoryRouter)
+app.use("/api/products", productRouter)
 
 
 // Add this before app.listen()
