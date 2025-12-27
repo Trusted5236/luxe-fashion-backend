@@ -5,6 +5,7 @@ import { storage, cloudinary } from "../config/cloudinary.js";
 import checkRole from '../middleware/checkRole.js';
 import multer from "multer";
 import Product from '../models/productSchema.js';
+import Category from '../models/categorySchema.js';
 
 const fileFilter = (req, file, cb)=>{
     const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp", "image/avif"];
@@ -43,6 +44,53 @@ router.post('/', authMiddleWare, checkRole("seller"), uploads.array("images", 8)
 
     await newProduct.save();
     res.status(201).json({ message: "Product created successfully!", product: newProduct });
+})
+
+
+router.get('/', authMiddleWare, async (req, res)=>{
+    const perPage = parseInt(req.query.perPage) || 8;
+    const page = parseInt(req.query.page) || 1;
+    const queryCategory = req.query.category;
+    const querySearch = req.query.search;
+
+    let query = {};
+
+    if(queryCategory){
+        const categories = await Category.find({name: queryCategory});
+
+        if(!categories){
+            return res.status(400).json({message: "Category not found"});
+        }
+
+        query.category = categories._id;
+    }
+
+    if(querySearch){
+        query.title = { $regex: querySearch, $options: 'i' };
+    }
+
+    const products = await Product.find(query).select("-description -seller -category -__v").skip((page - 1) * perPage).limit(perPage);
+
+    const updatedProducts = products.map(product => {
+        const numberOfReviews = product.reviews.length;
+        const sumOfRatings = product.reviews.reduce((sum, review) => sum + review.rating, 0);
+        const averageRating = sumOfRatings / (numberOfReviews || 1);
+
+        return {
+            ...products,
+            displayImage: product.images[0],
+            reviews: {
+                numberOfReviews,
+                averageRating
+            }
+        }
+    })
+
+    const totalProducts = await Product.countDocuments(query);
+    const totalPages = Math.ceil(totalProducts / perPage);
+    const totalProductInDB = await Product.countDocuments();
+
+    res.status(200).json({products: updatedProducts, page, perPage, totalPages, totalProducts, totalProductInDB});  
 })
 
 export default router;
