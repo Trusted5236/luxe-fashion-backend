@@ -47,7 +47,7 @@ router.post('/', authMiddleWare, checkRole("seller"), uploads.array("images", 8)
 })
 
 
-router.get('/', authMiddleWare, async (req, res)=>{
+router.get('/',  async (req, res)=>{
     const perPage = parseInt(req.query.perPage) || 8;
     const page = parseInt(req.query.page) || 1;
     const queryCategory = req.query.category;
