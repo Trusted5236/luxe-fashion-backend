@@ -24,7 +24,7 @@ const uploads = multer({
 
 
 router.post('/', authMiddleWare, checkRole("seller"), uploads.array("images", 8), async (req, res)=>{
-    const { title, description, category, price, stock } = req.body;
+    const { title, description, category, price, stock, bonus } = req.body;
     const imagePaths = req.files ? req.files.map(file => file.path) : [];
     const userId = req.user.id;
 
@@ -39,6 +39,7 @@ router.post('/', authMiddleWare, checkRole("seller"), uploads.array("images", 8)
         category,
         price,
         stock,
+        bonus,
         images: imagePaths
     });
 
