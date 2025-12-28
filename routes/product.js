@@ -95,4 +95,28 @@ router.get('/',  async (req, res)=>{
     res.status(200).json({products: updatedProducts, page, perPage, totalPages, totalProducts, totalProductInDB});  
 })
 
+router.get('/:id', async (req, res)=>{
+    const productId = req.params.id;
+
+    const product = await Product.findById(productId).populate('seller', 'name').populate('category', 'name').lean();
+
+    if(!product){
+        return res.status(404).json({message: "Product not found"});
+    }
+
+    const numberOfReviews = product.reviews.length;
+    const sumOfRatings = product.reviews.reduce((sum, review) => sum + review.rating, 0);
+    const averageRating = sumOfRatings / (numberOfReviews || 1);
+
+    const updatedProduct = {
+        ...product,
+        reviews: {
+            numberOfReviews,
+            averageRating
+        }
+    };
+
+    res.status(200).json({ product: updatedProduct });
+});
+
 export default router;
