@@ -6,6 +6,7 @@ import cors from 'cors'
 import categoryRouter from './routes/category.js'
 import path from 'path'
 import productRouter from './routes/product.js'
+import cartRouter from './routes/cart.js'
 
 
 const app = express()
@@ -27,6 +28,7 @@ dataBase()
 app.use("/api/auth", authRouter)
 app.use("/api/categories", categoryRouter)
 app.use("/api/products", productRouter)
+app.use("/api/cart", cartRouter)
 
 
 // Add this before app.listen()
