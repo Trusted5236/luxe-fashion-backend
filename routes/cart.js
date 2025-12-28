@@ -2,13 +2,13 @@ import express from 'express';
 import authMiddleWare from '../middleware/auth.js';
 import Product from '../models/productSchema.js';
 const router = express.Router();
-import Cart from '../models/productSchema.js';
+import Cart from '../models/cartSchema.js';
 
 
 router.post('/:productId', authMiddleWare, async (req, res) => {
-    const productId = req.params.id
+    const {productId} = req.params
     const {quantity} = req.body
-    const userId = user.id
+    const userId = req.user.id
 
     if(!productId || !quantity){
        return res.status(404).json({message: "Missing required field"});
@@ -40,12 +40,12 @@ router.post('/:productId', authMiddleWare, async (req, res) => {
     if (existingItemIndex > -1){
         cart.products[existingItemIndex].quantity += quantity;
 
-        if (cart.items[existingItemIndex].quantity > product.stock){
+        if (cart.products[existingItemIndex].quantity > product.stock){
         return res.status(404).json({message: 'Insufficient stock'})
     }
     }else{
         cart.products.push({
-            productId: product._id,
+            product: product._id,
             quantity: quantity,
             title: product.title,
             price: product.price,
@@ -53,8 +53,8 @@ router.post('/:productId', authMiddleWare, async (req, res) => {
         })
     }
 
-    cart.totalProducts = cart.products.reduce((sum, item) => sum + item.quantity, 0);
-    cart.totalCartPrice = cart.products.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    cart.totalCartProducts = cart.products.reduce((sum, item) => sum + item.quantity, 0);
+    cart.totalPrice = cart.products.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
     await cart.save()
     res.status(200).json({messgae : "Product added to cart successfully", cart: cart})
