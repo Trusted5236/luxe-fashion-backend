@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 
 const productSchema =  new mongoose.Schema({
+    sellerName : {type : String, required: true, maxlength: 100},
     title : {type : String, required: true, maxlength: 100},
     description : {type : String, required: true, minlength: 50},
     seller : {type : mongoose.Schema.Types.ObjectId, ref: 'User', required: true},
