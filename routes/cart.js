@@ -75,7 +75,7 @@ router.get("/", authMiddleWare, async (req, res)=>{
 router.patch("/increase/:productId", authMiddleWare, async (req, res)=>{
     const {productId} = req.params
     const {quantity} = req.body
-    const {userId} = req.user.id
+    const userId = req.user.id
 
     const product = await Product.findById(productId)
 
@@ -86,13 +86,13 @@ router.patch("/increase/:productId", authMiddleWare, async (req, res)=>{
     const cart = await Cart.findOne({user : userId})
 
     if(!cart){
-        res.status(404).json({message: "Cart not found"})
+       return res.status(404).json({message: "Cart not found"})
     }
 
     const productIndex = cart.products.findIndex(item => item.product.toString()  === productId.toString())
 
     if(productIndex === -1){
-        res.status(404).json({message: "Product not found in cart"})
+      return res.status(404).json({message: "Product not found in cart"})
     }
 
     if(cart.products[productIndex].quantity === product.stock){
@@ -112,7 +112,7 @@ router.patch("/increase/:productId", authMiddleWare, async (req, res)=>{
 router.patch("/decrease/:productId", authMiddleWare, async (req, res)=>{
     const {productId} = req.params
     const {quantity} = req.body
-    const {userId} = req.user.id
+    const userId = req.user.id
 
     const product = await Product.findById(productId)
 
@@ -123,14 +123,14 @@ router.patch("/decrease/:productId", authMiddleWare, async (req, res)=>{
     const cart = await Cart.findOne({user : userId})
 
     if(!cart){
-        res.status(404).json({message: "Cart not found"})
+       return res.status(404).json({message: "Cart not found"})
     }
 
     const productIndex = cart.products.findIndex((item)=> item.product.toString() === productId.toString())
 
     
     if(productIndex === -1){
-        res.status(404).json({message: "Product not found in cart"})
+       return res.status(404).json({message: "Product not found in cart"})
     }
 
     if(cart.products[productIndex].quantity === product.stock){
@@ -154,7 +154,7 @@ router.patch("/decrease/:productId", authMiddleWare, async (req, res)=>{
 
 router.patch("/delete/:productId", authMiddleWare, async (req, res)=>{
     const {productId} = req.params
-    const {userId} = req.user.id
+    const userId = req.user.id
 
     const product = await Product.findById(productId)
 
@@ -172,12 +172,12 @@ router.patch("/delete/:productId", authMiddleWare, async (req, res)=>{
 
     
     if(productIndex === -1){
-        res.status(404).json({message: "Product not found in cart"})
+        return res.status(404).json({message: "Product not found in cart"})
     }
 
     if(cart.products.length === 0  && cart.products[productIndex].product.toString() === productId.toString()){
         await Cart.deleteOne({user : userId})
-        res.status(200).json({message : "Product deleted successfully", cart: cart})
+        return res.status(200).json({message : "Product deleted successfully", cart: cart})
     }
 
     cart.products.splice(productIndex, 1)
