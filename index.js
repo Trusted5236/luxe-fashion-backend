@@ -4,9 +4,9 @@ import mongoose from 'mongoose'
 import authRouter from './routes/user.js'
 import cors from 'cors'
 import categoryRouter from './routes/category.js'
-import path from 'path'
 import productRouter from './routes/product.js'
 import cartRouter from './routes/cart.js'
+import orderRouter from "./routes/order.js"
 
 
 const app = express()
@@ -29,6 +29,7 @@ app.use("/api/auth", authRouter)
 app.use("/api/categories", categoryRouter)
 app.use("/api/products", productRouter)
 app.use("/api/cart", cartRouter)
+app.use("/api/order", orderRouter)
 
 
 // Add this before app.listen()
