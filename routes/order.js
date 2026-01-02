@@ -72,14 +72,7 @@ router.post("/paypal/create-order", authMiddleWare, async (req, res)=>{
                 currency_code : "USD",
                 value : order.totalPrice.toFixed(2)
             }
-        }],
-        application_context : {
-            return_url : `${process.env.Frontend_URL}/checkout/success`,
-            cancel_url : `${process.env.Frontend_URL}/checkout/cancel`,
-            brand_name : "LUXE Fashion",
-            user_action : "PAY_NOW"
-        }
-        
+        }]   
     }, {
         headers : {
             "Content-Type" : "application/json",
@@ -93,8 +86,7 @@ const paypalOrder =  response.data
 res.json({
     success : true,
     paypalOrderId : paypalOrder.id,
-    orderId : order._id,
-    approvalUrl : response.links.find(link => link.rel === "approve").href,
+    orderId : order._id
 })
 })
 
