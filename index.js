@@ -7,6 +7,7 @@ import categoryRouter from './routes/category.js'
 import productRouter from './routes/product.js'
 import cartRouter from './routes/cart.js'
 import orderRouter from "./routes/order.js"
+import adminRouter from "./routes/admin.js"
 
 
 const app = express()
@@ -30,6 +31,7 @@ app.use("/api/categories", categoryRouter)
 app.use("/api/products", productRouter)
 app.use("/api/cart", cartRouter)
 app.use("/api/order", orderRouter)
+app.use("/api/admin", adminRouter)
 
 
 // Add this before app.listen()
