@@ -5,6 +5,7 @@ import authMiddleWare from "../middleware/auth.js";
 import checkRole from "../middleware/checkRole.js";
 import multer from "multer";
 import { storage, cloudinary } from "../config/cloudinary.js";
+import fs from "fs"
 
 const fileFilter = (req, file, cb)=>{
     const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp", "image/avif"];
@@ -98,11 +99,9 @@ router.patch("/:id", authMiddleWare, checkRole("admin"), uploads.single("image")
 
             updateData.image = result.secure_url;
 
-            // Clean up temp file
             fs.unlinkSync(req.file.path);
         }
 
-        // Update category
         const updatedCategory = await Category.findByIdAndUpdate(
             id,
             updateData,
