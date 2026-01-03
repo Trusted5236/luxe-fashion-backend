@@ -65,4 +65,65 @@ router.delete("/:id", authMiddleWare, checkRole("admin"), async (req, res)=>{
     res.status(200).json({message : "Category deleted successfully!"})
 })
 
+router.patch("/:id", authMiddleWare, checkRole("admin"), uploads.single("image"), async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { name } = req.body;
+
+        const category = await Category.findById(id);
+        if (!category) {
+            return res.status(404).json({ message: "Category not found!" });
+        }
+
+
+        const updateData = {};
+        if (name) updateData.name = name;
+
+
+        if (req.file) {
+
+            if (category.image) {
+                const publicId = category.image.split("/").pop().split(".")[0];
+                await cloudinary.uploader.destroy(`categories/${publicId}`);
+            }
+
+
+            const result = await cloudinary.uploader.upload(req.file.path, {
+                folder: "categories",
+                transformation: [
+                    { width: 800, height: 800, crop: "limit" },
+                    { quality: "auto" }
+                ]
+            });
+
+            updateData.image = result.secure_url;
+
+            // Clean up temp file
+            fs.unlinkSync(req.file.path);
+        }
+
+        // Update category
+        const updatedCategory = await Category.findByIdAndUpdate(
+            id,
+            updateData,
+            { new: true, runValidators: true }
+        );
+
+        res.status(200).json({
+            message: "Category updated successfully!",
+            category: updatedCategory
+        });
+
+    } catch (error) {
+        if (req.file && fs.existsSync(req.file.path)) {
+            fs.unlinkSync(req.file.path);
+        }
+        
+        res.status(500).json({ 
+            message: "Error updating category", 
+            error: error.message 
+        });
+    }
+});
+
 export default router
