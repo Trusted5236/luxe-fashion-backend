@@ -16,8 +16,8 @@ router.get('/stats', async (req, res)=>{
     const totalProducts = await Product.countDocuments()
 
     const revenue = await Order.aggregate([
-        {$match : {status : "completed"}},
-        {$group : {_id: null, total : {$sum : $totalPrice}}}
+        {$match : {orderStatus : "completed"}},
+        {$group : {_id: null, total : {$sum : `$totalPrice`}}}
     ])
 
     const thisMonth = new Date();
