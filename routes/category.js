@@ -98,8 +98,6 @@ router.patch("/:id", authMiddleWare, checkRole("admin"), uploads.single("image")
             });
 
             updateData.image = result.secure_url;
-
-            fs.unlinkSync(req.file.path);
         }
 
         const updatedCategory = await Category.findByIdAndUpdate(
