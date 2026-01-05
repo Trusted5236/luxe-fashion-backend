@@ -6,7 +6,8 @@ const userSchema = new mongoose.Schema({
     password : {type: String, required: true, minlength: 6},
     role: {type : String, enum: ["user", "seller", "admin"], default: "user"},
     resetToken: {type: String},
-    resetTokenExpiry: {type: Date}
+    resetTokenExpiry: {type: Date},
+    createdAt : {type : Date, default: Date.now}
 })
 
 const User = mongoose.model("User", userSchema)

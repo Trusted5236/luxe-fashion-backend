@@ -46,7 +46,7 @@ router.get('/stats', async (req, res)=>{
             users: {
                 total: totalUsers,
                 newThisMonth: newUsersThisMonth,
-                list: users
+                list: users,
             },
             sellers: {
                 total: totalSellers,
