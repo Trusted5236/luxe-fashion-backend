@@ -34,7 +34,7 @@ router.post("/", async (req, res)=>{
     })
 
     await newUser.save()
-    const token = await getAccessToken({id: newUser._id, role: newUser.role, email : newUser.email, name: newUser.name})
+    const token = getAccessToken({id: newUser._id, role: newUser.role, email : newUser.email, name: newUser.name})
     res.status(201).json(token)
 })
 
