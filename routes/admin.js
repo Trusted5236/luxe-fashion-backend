@@ -17,11 +17,26 @@ router.get('/stats', async (req, res)=>{
     const totalSellers = await User.countDocuments({role : "seller"})
     const totalAdmins = await User.countDocuments({role : "admin"})
     const totalProducts = await Product.countDocuments()
+    
     const users = await User.find({role : "user"}).select("-password -__v").sort({createdAt : -1}).skip(skip).limit(limit)
-    const sellers = await User.find({role : "seller"}).select("-password -__v").sort({createdAt : -1}).skip(skip).limit(limit)
-    const admins = await User.find({role : "seller"}).select("-password -__v").sort({createdAt : -1}).skip(skip).limit(limit)
+    
+    // Get sellers with their product counts
+    const sellersRaw = await User.find({role : "seller"}).select("-password -__v").sort({createdAt : -1}).skip(skip).limit(limit)
+    
+    const sellers = await Promise.all(
+        sellersRaw.map(async (seller) => {
+            const productCount = await Product.countDocuments({ 
+                seller: seller._id 
+            });
+            return {
+                ...seller.toObject(),
+                productCount
+            };
+        })
+    );
+    
+    const admins = await User.find({role : "admin"}).select("-password -__v").sort({createdAt : -1}).skip(skip).limit(limit)
     const products = await Product.find();
-
 
     const revenue = await Order.aggregate([
         {$match : {orderStatus : "Paid"}},
@@ -29,45 +44,46 @@ router.get('/stats', async (req, res)=>{
     ])
 
     const thisMonth = new Date();
-        thisMonth.setDate(1);
-        thisMonth.setHours(0, 0, 0, 0);
+    thisMonth.setDate(1);
+    thisMonth.setHours(0, 0, 0, 0);
 
     const newUsersThisMonth = await User.countDocuments({
-            role: 'user',
-            createdAt: { $gte: thisMonth }
-        });
-        
-        const newSellersThisMonth = await User.countDocuments({
-            role: 'seller',
-            createdAt: { $gte: thisMonth }
+        role: 'user',
+        createdAt: { $gte: thisMonth }
+    });
+    
+    const newSellersThisMonth = await User.countDocuments({
+        role: 'seller',
+        createdAt: { $gte: thisMonth }
     });
     
     res.json({
-            users: {
-                total: totalUsers,
-                newThisMonth: newUsersThisMonth,
-                list: users,
-            },
-            sellers: {
-                total: totalSellers,
-                newThisMonth: newSellersThisMonth,
-                list: sellers
-            },
-            admins: {
-                total: totalAdmins,
-                list: admins
-            },
-            products: {
-                total: totalProducts,
-                list: products
-            },
-            revenue: revenue[0]?.total || 0,
-            pagination: {
-                page,
-                limit,
-                totalPages: Math.ceil(totalUsers / limit)
-            }
-        });
+        users: {
+            total: totalUsers,
+            newThisMonth: newUsersThisMonth,
+            list: users,
+        },
+        sellers: {
+            total: totalSellers,
+            newThisMonth: newSellersThisMonth,
+            list: sellers // Now includes productCount for each seller
+        },
+        admins: {
+            total: totalAdmins,
+            list: admins
+        },
+        products: {
+            total: totalProducts,
+            list: products
+        },
+        revenue: revenue[0]?.total || 0,
+        pagination: {
+            page,
+            limit,
+            totalPages: Math.ceil(totalUsers / limit)
+        }
+    });
 })
 
 export default router
+
