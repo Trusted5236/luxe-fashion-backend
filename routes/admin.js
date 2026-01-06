@@ -81,7 +81,15 @@ router.get('/stats', async (req, res)=>{
         pagination: {
             page,
             limit,
-            totalPages: Math.ceil(totalUsers / limit)
+            users: {
+                totalPages: Math.ceil(totalUsers / limit)
+            },
+            sellers: {
+                totalPages: Math.ceil(totalSellers / limit)
+            },
+            products: {
+                totalPages: Math.ceil(totalProducts / limit)
+            }
         }
     });
 })
