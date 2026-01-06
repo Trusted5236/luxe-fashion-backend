@@ -36,7 +36,7 @@ router.get('/stats', async (req, res)=>{
     );
     
     const admins = await User.find({role : "admin"}).select("-password -__v").sort({createdAt : -1}).skip(skip).limit(limit)
-    const products = await Product.find();
+    const products = await Product.find().populate('seller', 'name email').populate('category', 'name image').select("-password -__v").sort({createdAt : -1}).skip(skip).limit(limit);
 
     const revenue = await Order.aggregate([
         {$match : {orderStatus : "Paid"}},
@@ -66,7 +66,8 @@ router.get('/stats', async (req, res)=>{
         sellers: {
             total: totalSellers,
             newThisMonth: newSellersThisMonth,
-            list: sellers // Now includes productCount for each seller
+            list: sellers,
+            products
         },
         admins: {
             total: totalAdmins,
