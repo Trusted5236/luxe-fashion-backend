@@ -8,10 +8,16 @@ import productRouter from './routes/product.js'
 import cartRouter from './routes/cart.js'
 import orderRouter from "./routes/order.js"
 import adminRouter from "./routes/admin.js"
+import authenticationRouter from "./routes/authentication.js"
+import './config/passport.js'
 
+if (process.env.NODE_ENV === 'production') {
+  dotenv.config({ path: '.env.production' });
+} else {
+  dotenv.config(); // Uses .env by default
+}
 
 const app = express()
-dotenv.config()
 app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
@@ -32,6 +38,7 @@ app.use("/api/products", productRouter)
 app.use("/api/cart", cartRouter)
 app.use("/api/order", orderRouter)
 app.use("/api/admin", adminRouter)
+app.use("/api/authentication", authenticationRouter)
 
 
 // Add this before app.listen()

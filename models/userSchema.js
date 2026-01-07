@@ -3,7 +3,8 @@ import mongoose from "mongoose";
 const userSchema = new mongoose.Schema({
     name : {type: String, required: true, minlength: 3},
     email : {type: String, required: true, unique: true},
-    password : {type: String, required: true, minlength: 6},
+    password : {type: String, minlength: 6},
+    googleId : {type : String},
     role: {type : String, enum: ["user", "seller", "admin"], default: "user"},
     resetToken: {type: String},
     resetTokenExpiry: {type: Date},
