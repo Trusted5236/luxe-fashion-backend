@@ -5,7 +5,7 @@ import User from "../models/userSchema.js";
 import jwt from 'jsonwebtoken'
 
 const handleOauthUser = async (profile, providerId)=>{
-    let user = await User.findOne({$or: [{[providerId] : profile.id}, {email : profile.email}]})
+    let user = await User.findOne({$or: [{[providerId] : profile.id}, {email : profile.emails[0].value}]})
 
     if(user){
         if (!user[providerId]) {
