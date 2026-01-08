@@ -7,7 +7,8 @@ dotenv.config()
 passport.use(new GoogleStrategy({
     clientID: process.env.CLIENT_ID,
     clientSecret: process.env.CLIENT_SECRET,
-    callbackURL: `${process.env.Backend_URL}/api/authentication/google/callback`
+    callbackURL: `${process.env.Backend_URL}/api/authentication/google/callback`,
+    proxy : true
   },
   function(request, accessToken, refreshToken, profile, done) {
     console.log(profile)
