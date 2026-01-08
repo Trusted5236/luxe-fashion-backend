@@ -21,7 +21,7 @@ const handleOauthUser = async (profile, providerId)=>{
 
         await user.save()
     }
-    const token = jwt.sign({_id: user.id, name: user.name, role : user.role, email : user.email}, process.env.JWT_KEY, {expiresIn : "2h"})
+    const token = jwt.sign({id: user.id, name: user.name, role : user.role, email : user.email}, process.env.JWT_KEY, {expiresIn : "2h"})
     return token
 }
 
