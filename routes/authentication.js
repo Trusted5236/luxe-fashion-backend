@@ -8,10 +8,13 @@ const handleOauthUser = async (profile, providerId)=>{
     let user = await User.findOne({$or: [{[providerId] : profile.id}, {email : profile.email}]})
 
     if(user){
-        if(!user[providerId]){
-            user[providerId] = profile.id,
-            await user.save()
-        }
+        if (!user[providerId]) {
+                user[providerId] = profile.id;
+                await user.save();
+                console.log('✅ Linked Google account to existing user');
+            } else {
+                console.log('✅ User already has Google linked');
+            }
     }else {
         user = new User({
             name : profile.displayName,
@@ -21,7 +24,7 @@ const handleOauthUser = async (profile, providerId)=>{
 
         await user.save()
     }
-    const token = jwt.sign({id: user.id, name: user.name, role : user.role, email : user.email}, process.env.JWT_KEY, {expiresIn : "2h"})
+    const token = jwt.sign({id: user._id, name: user.name, role : user.role, email : user.email}, process.env.JWT_KEY, {expiresIn : "2h"})
     return token
 }
 
