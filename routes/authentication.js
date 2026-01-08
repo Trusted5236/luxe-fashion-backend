@@ -31,10 +31,23 @@ router.get('/google',
 
 
 router.get('/google/callback',
-  passport.authenticate('google', {session : false, failureRedirect : `${process.env.Frontend_URL}/auth`}), async (req, res)=>{
-    const profile = req.user
-    const token = await handleOauthUser(profile, "googleId")
-    res.redirect(`${process.env.Frontend_URL}/?token=${token}`)
+  passport.authenticate('google', {session : false, failureRedirect : `${process.env.Frontend_URL}/auth`}), 
+  async (req, res)=>{
+    try {
+      console.log('✅ Google callback reached');
+      console.log('Profile:', req.user);
+      
+      const profile = req.user;
+      const token = await handleOauthUser(profile, "googleId");
+      
+      console.log('✅ Token generated:', token);
+      console.log('🔄 Redirecting to:', `${process.env.Frontend_URL}/?token=${token}`);
+      
+      res.redirect(`${process.env.Frontend_URL}/?token=${token}`);
+    } catch (error) {
+      console.error('❌ Error in callback:', error);
+      res.redirect(`${process.env.Frontend_URL}/auth?error=oauth_failed`);
+    }
   }
 );
 
