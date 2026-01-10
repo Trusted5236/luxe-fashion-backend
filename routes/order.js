@@ -147,4 +147,10 @@ router.post("/paypal/capture-order", authMiddleWare, async (req, res)=>{
             });
         }
 })
+
+router.get("/", authMiddleWare, async (req, res)=>{
+    const userId = req.user.id
+    const order = await Order.find({user : userId})
+    return res.status(200).json({message: 'Order sent sucessfully', order})
+})
 export default router
