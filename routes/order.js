@@ -5,6 +5,7 @@ import Order from "../models/orderModal.js";
 import axios from "axios";
 import { paypal, getAccessToken } from "../config/paypal.js";
 import dotenv from 'dotenv'
+import { storage, cloudinary } from "../config/cloudinary.js";
 const router = express.Router()
 dotenv.config()
 
