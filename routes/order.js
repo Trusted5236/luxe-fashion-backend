@@ -153,4 +153,29 @@ router.get("/", authMiddleWare, async (req, res)=>{
     const order = await Order.find({user : userId})
     return res.status(200).json({message: 'Order sent sucessfully', order})
 })
+
+router.delete("/:id", authMiddleWare, async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const order = await Order.findById(id);
+    if (!order) {
+      return res.status(404).json({ message: "Order not found!" });
+    }
+    
+    for (const item of order.products) {
+      if (item.image) {
+        const publicId = item.image.split("/").pop().split(".")[0];
+        await cloudinary.uploader.destroy(`categories/${publicId}`);
+      }
+    }
+    
+    await Order.findByIdAndDelete(id);
+    
+    res.status(200).json({ message: "Order deleted successfully!" });
+  } catch (error) {
+    res.status(500).json({ message: "Error deleting order", error: error.message });
+  }
+});
+
 export default router
