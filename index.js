@@ -10,6 +10,8 @@ import orderRouter from "./routes/order.js"
 import adminRouter from "./routes/admin.js"
 import authenticationRouter from "./routes/authentication.js"
 import './config/passport.js'
+import swaggerUi from 'swagger-ui-express'
+import swaggerSpecs from './config/swagger.js'
 
 if (process.env.NODE_ENV === 'production') {
   dotenv.config({ path: '.env.production' });
@@ -21,6 +23,7 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs))
 const PORT = process.env.PORT
 const dataBase = async ()=>{
     try {
